@@ -5,8 +5,29 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "electron:serve": "vue-cli-service electron:serve",
+    "electron:build": "vue-cli-service electron:build",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "pack:dir": "vue-cli-service electron:build --dir",
+    "pack": "pack:win && yarn pack:mac",
+    "pack:win": "yarn pack:win:setup:x86_64 && yarn pack:win:setup:arm64",
+    "pack:win:setup:x86_64": "cross-env TARGET=Setup ARCH=x86_64 vue-cli-service electron:build -w=nsis --x64 --ia32 -p never",
+    "pack:win:setup:arm64": "cross-env TARGET=Setup ARCH=arm64 vue-cli-service electron:build -w=nsis --arm64 -p never",
+    "pack:mac": "yarn pack:mac:dmg && yarn pack:mac:dmg:arm64",
+    "pack:mac:dmg": "vue-cli-service electron:build -m=dmg -p never",
+    "pack:mac:dmg:arm64": "vue-cli-service electron:build -m=dmg --arm64 -p never",
+    "pack:linux": "yarn pack:linux:deb && yarn pack:linux:appImage && yarn pack:linux:rpm && yarn pack:linux:pacman",
+    "pack:linux:appImage": "cross-env ARCH=x64 vue-cli-service electron:build -l=AppImage -p never",
+    "pack:linux:deb": "yarn pack:linux:deb:x64 && yarn pack:linux:deb:arm64 && yarn pack:linux:deb:armv7l",
+    "pack:linux:deb:x64": "cross-env ARCH=x64 vue-cli-service electron:build -l=deb --x64 -p never",
+    "pack:linux:deb:arm64": "cross-env ARCH=arm64 vue-cli-service electron:build -l=deb --arm64 -p never",
+    "pack:linux:deb:armv7l": "cross-env ARCH=armv7l vue-cli-service electron:build -l=deb --armv7l -p never",
+    "pack:linux:rpm": "cross-env ARCH=x64 vue-cli-service electron:build -l=rpm --x64 -p never",
+    "pack:linux:pacman": "cross-env ARCH=x64 vue-cli-service electron:build -l=pacman --x64 -p never"
   },
+  "main": "background.js",
   "dependencies": {
     "core-js": "^3.8.3",
     "register-service-worker": "^1.7.2",
@@ -15,6 +36,8 @@
     "vuex": "^4.0.0"
   },
   "devDependencies": {
+    "@matthijsburgh/vue-cli-plugin-electron-builder": "~3.0.1",
+    "@types/electron-devtools-installer": "^2.2.0",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
     "@vue/cli-plugin-babel": "~5.0.8",
@@ -26,6 +49,9 @@
     "@vue/cli-service": "~5.0.8",
     "@vue/eslint-config-standard": "^8.0.1",
     "@vue/eslint-config-typescript": "^11.0.2",
+    "cross-env": "^7.0.3",
+    "electron": "^24.1.2",
+    "electron-devtools-installer": "^3.1.0",
     "eslint": "^8.39.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-node": "^11.1.0",
@@ -33,6 +59,8 @@
     "eslint-plugin-vue": "^9.11.0",
     "sass": "^1.32.7",
     "sass-loader": "^13.2.2",
+    "ts-loader": "8.2.0",
     "typescript": "^5.0.4"
-  }
+  },
+  "homepage": "https://github.com/lyswhut/lx-music-desktop#readme"
 }
